@@ -1,69 +1,158 @@
+/* ===== 全体 ===== */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
-  font-family: 'Arial', sans-serif;
   overflow: hidden;
+  font-family: Arial, sans-serif;
+  background-color: black;
 }
 
-#intro-video {
+/* ===== 動画（背景・オープニング） ===== */
+video {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  z-index: 999;
+  z-index: 0;
 }
 
-.hidden {
-  display: none;
-}
-
-#logo {
-  max-width: 600px;
-  width: 80%;
-  height: auto;
-  margin-bottom: 30px;
+#opening-video {
+  z-index: 10;
 }
 
 #bg-video {
+  z-index: 0;
+}
+
+/* ===== フェードオーバーレイ ===== */
+#fade-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  min-width: 100%;
-  min-height: 100%;
-  z-index: -1;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1s ease;
+  z-index: 20;
+}
+#fade-overlay.fade-in {
+  opacity: 1;
+  pointer-events: auto;
+}
+#fade-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
 }
 
+/* ===== メインUIコンテナ ===== */
 .overlay {
   position: relative;
-  z-index: 1;
+  z-index: 30;
+  color: white;
   text-align: center;
-  color: #fff;
   padding: 40px 20px;
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+.overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+  display: none;
 }
 
-h1 {
-  font-size: 3em;
-  color: #ffda44;
-  text-shadow: 3px 3px 10px #000;
-  margin-bottom: 30px;
+/* ===== ロゴ ===== */
+#logo {
+  width: 600px;
+  max-width: 90%;
+  margin-bottom: 20px;
+}
+
+/* ===== 難易度選択エリア ===== */
+#difficulty-selection {
+  margin-bottom: 40px;
+}
+
+.difficulty-btn {
+  background-color: #888888;
+  color: white;
+  font-size: 1.5em;
+  padding: 15px 30px;
+  margin: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 180px;
+  transition: background-color 0.3s, color 0.3s;
+  user-select: none;
+}
+
+/* 選択済みのボタンはホバー色と同じにする */
+.difficulty-btn.selected {
+  background-color: #4444aa; /* ホバー時と同じ色 */
+  color: #fff;
+}
+
+/* ホバー時に濃い青色に */
+.difficulty-btn:hover:not(.selected) {
+  background-color: #4444aa; /* 濃い青色 */
+  color: #fff;
+}
+
+/* 選択済みのボタンにホバーしても色は変わらない */
+.difficulty-btn.selected:hover {
+  background-color: #4444aa;
+  color: #fff;
+}
+}
+
+#start-btn {
+  background-color: #888888;
+  color: white;
+  font-size: 3em;         /* 文字サイズをさらに大きく */
+  padding: 40px 80px;     /* パディングを大幅アップ */
+  margin: 30px auto;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  width: 600px;           /* 幅を広げる */
+  max-width: 90%;         /* 画面小さい時ははみ出さないように */
+  display: block;
+  transition: background-color 0.3s;
+}
+
+#start-btn:hover {
+  background-color: #666666;
+}
+#start-btn.hidden {
+  display: none;
+}
+
+/* ===== クイズ表示エリア ===== */
+#quiz-container {
+  display: none;
+}
+
+#countdown {
+  font-size: 2em;
+  margin-bottom: 20px;
 }
 
 #question {
   font-size: 2em;
-  margin-bottom: 30px;
+  background: rgba(0, 0, 0, 0.6);
   padding: 20px;
-  background-color: rgba(0, 0, 0, 0.6);
   border-radius: 12px;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
   max-width: 80%;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 30px auto;
 }
 
+/* ===== 選択肢（左右） ===== */
 #choices {
   display: flex;
   justify-content: center;
@@ -80,41 +169,23 @@ h1 {
   border: none;
   border-radius: 12px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
+  user-select: none;
 }
 
+.choice-btn:hover:not(:disabled) {
+  background-color: #A0522D;
+}
+
+.choice-btn:disabled {
+  background-color: #555555;
+  cursor: default;
+}
+
+/* ===== 結果表示 ===== */
 #result {
   font-size: 2em;
-  margin-top: 20px;
-  color: #ffff66;
+  color: yellow;
   text-shadow: 1px 1px 3px #000;
-}
-
-#countdown {
-  font-size: 2em;
-  margin-bottom: 20px;
-}
-
-#difficulty-selection {
-  margin-bottom: 40px;
-}
-
-.difficulty-btn {
-  font-size: 1.2em;
-  padding: 10px 20px;
-  margin: 0 10px;
-  border: none;
-  background-color: #444;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-#quiz-container {
-  display: none;
-}
-
-.difficulty-btn.selected {
-  background-color: #228B22;
-  font-weight: bold;
-  border: 2px solid white;
+  min-height: 2.5em;
 }
